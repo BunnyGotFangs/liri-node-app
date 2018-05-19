@@ -76,14 +76,16 @@ function Tweets()
     };
     client.get('statuses/user_timeline', User_ID, function(error, tweets, response)
     {
+ // error statement       
       if(!error)
         {
+ //looping to get multiple twitter responses and limiting to 20           
         for(var i = 0; i<tweets.length; i++)
             {
                 var date = tweets[i].created_at;
-                console.log(User_ID + tweets[i].text + " Created At: " + date.substring(0, 19));
-                console.log("-----------------------");
-                fs.appendFile('log.txt', User_ID  + tweets[i].text + " Created At: " + date.substring(0, 19));
+                console.log(User_ID + tweets[i].text + date.substring(0, 19));
+//tryig to include the creation of the information in a text file
+                fs.appendFile('log.txt', User_ID  + tweets[i].text + date.substring(0, 19));
                 
             }
         }
@@ -91,7 +93,7 @@ function Tweets()
             {
                 console.log('OOPS, there is a problem.');
             }
-    s});
+    });
 }
 
 //next function needed is for being able to the song search if it were to work. This too will have a defualt referenence incase no song is provided
@@ -101,6 +103,7 @@ function songs()
     spotify.search(
     { type: 'track', query: song}, function(error, data)
         {
+//error statement
       if(!error)
             {
         for(var i = 0; i < data.tracks.items.length; i++)
@@ -111,17 +114,70 @@ function songs()
           console.log(songData.name);
           console.log(songData.preview_url);
           console.log(songData.album.name);
- //add the info
+//tryig to include the creation of the information in a text file
           fs.appendFile('log.txt', songData.artists[0].name);
           fs.appendFile('log.txt', songData.name);
           fs.appendFile('log.txt', songData.preview_url);
           fs.appendFile('log.txt', songData.album.name);
-// inputting a defalt value so that all can see someting is now movie supplier  
+// inputting a defalt value so that all can see someting is no  movie supplied  
                 }
-            } else
+            } 
+            else
             {
                 console.log('OOOPS! There was a problem');
             }
         });
   }
   
+  // next is the function for finding movie information calling omdb and passing some requests for plot and tomatoes and reg stuff
+  function movies()
+{
+    var oURL = 'http://www.omdbapi.com/?t=' + movie + '&plot=short&tomatoes=true';
+  //error statement
+    request(oURL, function (error, response, body)
+    {
+      if(!error && response.statusCode == 200)
+        {
+            var body = JSON.parse(body);
+  
+        console.log(body.Title);
+        console.log(body.Year);
+        console.log(body.imdbRating);
+        console.log(body.tomatoRating);
+        console.log(body.Country);
+        console.log(body.Language);
+        console.log(body.Plot);
+        console.log(body.Actors);
+  
+//tryig to include the creation of the information in a text file
+        fs.appendFile('log.txt', body.Title);
+        fs.appendFile('log.txt', body.Year);
+        fs.appendFile('log.txt', body.imdbRating);
+        fs.appendFile('log.txt', body.tomatoRating);
+        fs.appendFile('log.txt', body.Country);
+        fs.appendFile('log.txt', body.Language);
+        fs.appendFile('log.txt', body.Plot);
+        fs.appendFile('log.txt', body.Actors);
+  
+        } 
+            else
+        {
+            console.log('OOPS, there is a problem.')
+        }
+        //here is the if statement and default value for in case no movie was input
+            if(movie === "Mr. Nobody")
+        {
+
+            console.log("If you haven't watched 'Mr. Nobody,' then the instructor of my class says I should tell you too. I have never seen it, but here's the info http://www.imdb.com/title/tt0485947/");
+    
+            fs.appendFile('log.txt', "If you haven't watched 'Mr. Nobody,' then you should: http://www.imdb.com/title/tt0485947/");
+            fs.appendFile('log.txt', "It's on Netflix!");
+        }
+    });
+  
+}
+  //but not 100% what it is I am supposed to be doing with the random file. I know I need a function but to do what
+  function Whatevs()
+{
+    
+}
